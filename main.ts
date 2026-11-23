@@ -30,6 +30,13 @@ if (size > 1048576) {
   throw new Error(`entry image is ${size} bytes, over the 1 MiB limit`);
 }
 
+const bytes = readFileSync(source);
+const width = bytes.readUInt32BE(16);
+const height = bytes.readUInt32BE(20);
+if (width > 1024 || height > 1024) {
+  throw new Error(`entry image is ${width}x${height}, over the 1024x1024 limit`);
+}
+
 mkdirSync(outputDir, { recursive: true });
 copyFileSync(source, target);
-console.log(`wrote ${target} (${size} bytes, 1024x1024 PNG)`);
+console.log(`wrote ${target} (${size} bytes, ${width}x${height} PNG)`);
